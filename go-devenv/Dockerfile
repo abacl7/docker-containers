@@ -12,7 +12,8 @@ ENV PATH $GOBIN:$PATH
 
 RUN apt-get update -q -y && apt-get -y install curl git jq nkf make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils software-properties-common zip
 
-RUN git clone https://github.com/riywo/anyenv $ANYENV_HOME && RUN mkdir $ANYENV_ENV
+RUN git clone https://github.com/riywo/anyenv $ANYENV_HOME
+RUN mkdir $ANYENV_ENV
 ENV PATH $ANYENV_HOME/bin:$PATH
 
 RUN anyenv install pyenv
@@ -23,11 +24,11 @@ RUN anyenv install goenv
 ENV PATH $ANYENV_ENV/goenv/bin:$ANYENV_ENV/goenv/shims:$PATH
 ENV GOENV_ROOT $ANYENV_ENV/goenv
 
-RUN pyenv install $PYTHON_VERSION && RUN pyenv global $PYTHON_VERSION RUN pyenv rehash
+RUN pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION pyenv rehash
 
-RUN goenv install $GO_VERSION && RUN goenv global $GO_VERSION && RUN goenv rehash
+RUN goenv install $GO_VERSION && goenv global $GO_VERSION && goenv rehash
 
-RUN pip install awscli && RUN pip install yamllint && RUN apt-add-repository ppa:duggan/jo --yes  && RUN apt-get update -q && RUN apt-get install jo
+RUN pip install awscli && pip install yamllint && apt-add-repository ppa:duggan/jo --yes  && apt-get update -q && apt-get install jo
 RUN rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL https://goss.rocks/install | GOSS_DST=/bin sh
 
