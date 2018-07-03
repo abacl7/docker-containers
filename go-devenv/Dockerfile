@@ -24,7 +24,7 @@ ENV GOPATH $GOENV_ROOT
 ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:$GOENV_ROOT/shims:$PATH
 
-RUN pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION pyenv rehash
+RUN pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION && pyenv rehash
 
 RUN goenv install $GO_VERSION && goenv global $GO_VERSION && goenv rehash
 
