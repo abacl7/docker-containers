@@ -1,0 +1,34 @@
+FROM ubuntu:16.04
+
+ENV PYTHON_VERSION 2.7.15
+ENV GO_VERSION 1.10.3
+
+ENV HOME /root
+ENV ANYENV_HOME $HOME/.anyenv
+ENV ANYENV_ENV  $ANYENV_HOME/envs
+ENV GOPATH /go
+ENV GOBIN $GOPATH/bin
+ENV PATH $GOBIN:$PATH
+
+RUN apt-get update -q -y && apt-get -y install curl git jq nkf make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils software-properties-common zip
+
+RUN git clone https://github.com/riywo/anyenv $ANYENV_HOME && RUN mkdir $ANYENV_ENV
+ENV PATH $ANYENV_HOME/bin:$PATH
+
+RUN anyenv install pyenv
+ENV PATH $ANYENV_ENV/pyenv/bin:$ANYENV_ENV/pyenv/shims:$PATH
+ENV PYENV_ROOT $ANYENV_ENV/pyenv
+
+RUN anyenv install goenv
+ENV PATH $ANYENV_ENV/goenv/bin:$ANYENV_ENV/goenv/shims:$PATH
+ENV GOENV_ROOT $ANYENV_ENV/goenv
+
+RUN pyenv install $PYTHON_VERSION && RUN pyenv global $PYTHON_VERSION RUN pyenv rehash
+
+RUN goenv install $GO_VERSION && RUN goenv global $GO_VERSION && RUN goenv rehash
+
+RUN pip install awscli && RUN pip install yamllint && RUN apt-add-repository ppa:duggan/jo --yes  && RUN apt-get update -q && RUN apt-get install jo
+RUN rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://goss.rocks/install | GOSS_DST=/bin sh
+
+RUN go get github.com/aws/aws-lambda-go/events && go get github.com/aws/aws-lambda-go/lambda && go get github.com/aws/aws-sdk-go/service/athena && go get github.com/golang/lint/golint
